@@ -47,11 +47,11 @@ package testng;
 	        jse.executeScript("arguments[0].innerHTML= arguments[1];",we,"Hello People!");
 	        //Getting text from the page
 	        String str = driver.findElement(By.tagName("p")).getText();
-	        Assert.assertEquals(str,"Hello People");
+	        Assert.assertEquals(str,"Hello People!");
 	        System.out.println(str);
 
 	    }
 
 
 	}
-}
+
