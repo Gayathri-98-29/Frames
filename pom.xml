@@ -54,5 +54,22 @@
   		<artifactId>Write</artifactId>
   		<version>0.0.1-SNAPSHOT</version>
   	</dependency>
-  </dependencies>
+  	
+  
+    
+    <dependency>
+    <groupId>org.testng</groupId>
+    <artifactId>testng</artifactId>
+    <version>7.10.2</version>
+    <scope>test</scope>
+</dependency>
+
+</dependencies>
+<repositories>
+    <repository>
+        <id>internal-repo</id>
+        <url>http://your.company.repo/repository</url>
+    </repository>
+</repositories>
+
 </project>
