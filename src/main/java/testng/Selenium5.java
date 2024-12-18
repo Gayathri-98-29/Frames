@@ -1,74 +1,94 @@
 package testng;
-import java.time.Duration;
-import java.util.Date;
-
-import org.openqa.selenium.By;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
-
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.testng.annotations.BeforeMethod;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.TimeoutException;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.testng.annotations.AfterMethod;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+
+import java.time.Duration;
 
 public class Selenium5 {
-
     WebDriver driver;
 
-    @BeforeMethod
+    @BeforeClass
     public void setUp() {
-        // Use WebDriverManager to automatically download and set up ChromeDriver
-        WebDriverManager.chromedriver().setup();
+        // Set the path to your WebDriver executable (Chromedriver)
+    	  WebDriverManager.chromedriver().setup();
 
-        // Initialize ChromeOptions and maximize the window
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--start-maximized");
+          // Initialize ChromeOptions and maximize the window
+          ChromeOptions options = new ChromeOptions();
+          options.addArguments("--start-maximized");
 
-        // Create an instance of ChromeDriver
-        driver = new ChromeDriver(options);
+          // Create an instance of ChromeDriver
+          driver = new ChromeDriver(options);
     }
 
     @Test
-    public void testNextMonthAndSelectDate() {
-        // Navigate to the Datepicker URL
-        driver.get("https://jqueryui.com/datepicker/");
+    public void testSignUpAndLogin() {
+        try {
+            // Step 1: Sign Up
+            driver.get("https://www.guvi.in/signup");  // Replace with the Guvi sign-up URL
 
-        // Switch to the iframe containing the Datepicker
-        driver.switchTo().frame(driver.findElement(By.cssSelector("iframe[src='/resources/demos/datepicker/default.html']")));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));  // Set up explicit wait
 
-        // Locate the datepicker input field and click it to open the calendar
-        WebElement datepickerInput = driver.findElement(By.id("datepicker"));
-        datepickerInput.click();
+            // Wait for the "username" field to be visible
+            WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));  // Replace with actual element
+            usernameField.sendKeys("testuser");
 
-        // Click the 'Next' button to go to the next month
-        WebElement nextButton = driver.findElement(By.cssSelector(".ui-datepicker-next"));
-        nextButton.click();
+            // Wait for the "email" field to be visible
+            WebElement emailField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("email")));  // Replace with actual element
+            emailField.sendKeys("testuser@example.com");
 
-        // Click on the '22' to select the 22nd day
-        WebElement day22 = driver.findElement(By.xpath("//a[text()='22']"));
-        day22.click();
+            // Wait for the "password" field to be visible
+            WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));  // Replace with actual element
+            passwordField.sendKeys("Password123");
 
-        // Get the selected date from the input field
-        String selectedDate = datepickerInput.getAttribute("value");
+            // Wait until the sign-up button is clickable
+            WebElement signUpButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@type='submit']")));  // Replace with actual element
+            signUpButton.click();
 
-        // Print the selected date to the console
-        System.out.println("Selected Date: " + selectedDate);
+            // Assertion to confirm the sign-up was successful
+            WebElement signUpSuccessMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("success-message")));  // Replace with actual element
+            Assert.assertTrue(signUpSuccessMessage.isDisplayed(), "Sign up failed!");
+
+            // Step 2: Login
+            driver.get("https://www.guvi.in/login");  // Replace with the Guvi login URL
+
+            // Wait for the email field to be visible for login
+            WebElement emailFieldLogin = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("email")));  // Replace with actual element
+            emailFieldLogin.sendKeys("testuser@example.com");
+
+            // Wait for the password field to be visible for login
+            WebElement passwordFieldLogin = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("password")));  // Replace with actual element
+            passwordFieldLogin.sendKeys("Password123");
+
+            // Wait for the login button to be clickable
+            WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[@type='submit']")));  // Replace with actual element
+            loginButton.click();
+
+            // Assertion to confirm login was successful
+            WebElement profileIcon = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("profile-icon")));  // Replace with actual element
+            Assert.assertTrue(profileIcon.isDisplayed(), "Login failed!");
+        } catch (TimeoutException e) {
+            System.out.println("Timeout exception occurred. Ensure the page elements are loaded correctly.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("An error occurred during the test.");
+            e.printStackTrace();
+        }
     }
 
-    @AfterMethod
+    @AfterClass
     public void tearDown() {
-        // Close the browser window
-        if (driver != null) {
-            driver.quit();
-        }
+        driver.quit();
     }
 }
